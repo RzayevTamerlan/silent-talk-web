@@ -24,7 +24,7 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
           page: pageParam,
           limit: MESSAGES_PER_PAGE,
         });
-        console.log("Messages in queryFn:", res);
+        console.log('Messages in queryFn:', res);
         return res;
       },
       initialPageParam: 1,
@@ -34,6 +34,8 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
       },
       staleTime: 1,
     });
+
+  console.log("Error in useChatMessages:", error);
 
   useEffect(() => {
     if (!socket) return;
@@ -134,7 +136,7 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
     initializeSocket();
   }, []);
 
-  console.log("Data pages in useChatMessages:", data?.pages);
+  console.log('Data pages in useChatMessages:', data?.pages);
 
   const messages = useMemo(() => {
     if (!data?.pages) return [];
@@ -144,7 +146,7 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
       .flatMap(page => page.data);
   }, [data]);
 
-  console.log("useChatMessages messages", messages);
+  console.log('useChatMessages messages', messages);
 
   return {
     messages,

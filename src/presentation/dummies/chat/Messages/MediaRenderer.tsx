@@ -2,8 +2,8 @@
 import { FileTextOutlined } from '@ant-design/icons';
 import { Media } from '@domain/entities/Media.ts'; // Убедитесь, что тип Media импортирован
 import { MediaType } from '@domain/enums/MediaType.ts';
-import { FC, memo } from 'react';
 import { Image } from 'antd';
+import { FC, memo } from 'react';
 
 type MediaRendererProps = {
   media: Media;

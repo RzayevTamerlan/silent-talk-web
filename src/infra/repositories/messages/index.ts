@@ -37,7 +37,11 @@ const getAllMessages = async (chatId: string, dto: GetAllMessagesQueryDto) => {
     params: dto,
   });
 
+  console.log("Raw response data: ", res);
+
   const data = res.data.map(MessageMappers.toDomain);
+
+  console.log("Converted data: ", data);
 
   return {
     ...res,

@@ -240,7 +240,7 @@ const ChatWidget: FC<ChatWidgetProps> = ({
     ],
   );
 
-  console.log("Messages in Chat Widget:", messages);
+  console.log('Messages in Chat Widget:', messages);
 
   return (
     <GetChatMessagesContractProvider value={getChatMessagesContractValue}>
