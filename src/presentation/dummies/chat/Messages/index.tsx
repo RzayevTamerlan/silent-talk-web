@@ -1,4 +1,4 @@
-import { EllipsisOutlined } from '@ant-design/icons';
+import { ArrowDownOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { Message } from '@domain/entities/Message.ts';
 import { MessageType } from '@domain/enums/MessageType.ts';
 import { useGetChatMessagesContract } from '@presentation/contracts/chat/GetChatMessagesContract.tsx';
@@ -6,7 +6,7 @@ import { useMeContract } from '@presentation/contracts/user/MeContract.tsx';
 import MediaRenderer from '@presentation/dummies/chat/Messages/MediaRenderer.tsx';
 import VoiceMessagePlayer from '@presentation/dummies/chat/Messages/VoiceMessagePlayer.tsx';
 import { Button, Dropdown, List, MenuProps, Typography } from 'antd';
-import { FC, memo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { FC, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { EventBusProvider, useEmit, useEvent } from 'vibus-react';
 
 const { Text } = Typography;
@@ -166,6 +166,17 @@ const Messages = () => {
 
   console.log('Messages', messages);
 
+  const [isScrolledUp, setIsScrolledUp] = useState<boolean>(false);
+
+  const scrollToBottom = useCallback(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [chatRef]);
+
   const prevScrollHeightRef = useRef<number | null>(null);
 
   useLayoutEffect(() => {
@@ -174,13 +185,32 @@ const Messages = () => {
     }
   }, [queryLoading, messages, chatRef]);
 
+  useLayoutEffect(() => {
+    if (prevScrollHeightRef.current && chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight - prevScrollHeightRef.current;
+      prevScrollHeightRef.current = null;
+    }
+  }, [chatRef, messages]);
+
   useEffect(() => {
     const container = chatRef.current;
 
     const handleScroll = () => {
-      if (container && container.scrollTop === 0 && !isFetchingMore && hasMore) {
+      if (!container) return;
+
+      // Логика для подгрузки старых сообщений (без изменений)
+      if (container.scrollTop === 0 && !isFetchingMore && hasMore) {
         prevScrollHeightRef.current = container.scrollHeight;
         fetchMoreMessages();
+      }
+
+      const scrollFromBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight;
+
+      if (scrollFromBottom > 300) {
+        setIsScrolledUp(true);
+      } else {
+        setIsScrolledUp(false);
       }
     };
 
@@ -189,21 +219,14 @@ const Messages = () => {
     return () => {
       container?.removeEventListener('scroll', handleScroll);
     };
-  }, [chatRef, fetchMoreMessages, isFetchingMore, hasMore]); // Зависимости для эффекта
-
-  useLayoutEffect(() => {
-    if (prevScrollHeightRef.current && chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight - prevScrollHeightRef.current;
-      prevScrollHeightRef.current = null;
-    }
-  }, [chatRef, messages]);
+  }, [chatRef, fetchMoreMessages, isFetchingMore, hasMore]);
 
   if (loading || queryLoading) {
     return <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>;
   }
 
   return (
-    <div ref={chatRef} className="flex-grow p-4 overflow-y-auto">
+    <div ref={chatRef} className="flex-grow p-4 overflow-y-auto relative">
       {isFetchingMore && (
         <div className="flex justify-center my-2">
           <p className="text-gray-400">Загрузка предыдущих сообщений...</p>
@@ -217,6 +240,16 @@ const Messages = () => {
           renderItem={item => <ChatMessage key={item.id} item={item} />}
         />
       </EventBusProvider>
+
+      {isScrolledUp && (
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<ArrowDownOutlined />}
+          className="absolute bottom-5 right-5 z-20 animate-fade-in"
+          onClick={scrollToBottom}
+        />
+      )}
     </div>
   );
 };

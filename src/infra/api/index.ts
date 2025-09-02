@@ -16,7 +16,6 @@ export const api = axios.create({
 
 const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
-  'Cache-Control': 'no-cache',
 };
 
 api.interceptors.request.use(

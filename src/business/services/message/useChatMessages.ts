@@ -35,7 +35,7 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
       staleTime: 1,
     });
 
-  console.log("Error in useChatMessages:", error);
+  console.log('Error in useChatMessages:', error);
 
   useEffect(() => {
     if (!socket) return;
