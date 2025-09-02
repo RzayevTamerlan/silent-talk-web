@@ -79,6 +79,7 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
     }
   });
 
+
   return (
     <List.Item
       id={item.id}
@@ -163,6 +164,8 @@ const Messages = () => {
     isFetchingMore,
   } = useGetChatMessagesContract();
   const { loading } = useMeContract();
+
+  console.log("Messages", messages);
 
   const prevScrollHeightRef = useRef<number | null>(null);
 
