@@ -15,7 +15,7 @@ const ChatPage = () => {
 
   return (
     <main>
-      <Layout className="h-screen">
+      <Layout className="h-[100dvh]">
         <ChatHeader chatId={chatId} />
         <Layout>
           <Content className="flex flex-col">
