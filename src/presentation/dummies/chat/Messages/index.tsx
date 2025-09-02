@@ -245,8 +245,9 @@ const Messages = () => {
         <Button
           type="primary"
           shape="circle"
+          size="large"
           icon={<ArrowDownOutlined />}
-          className="fixed right-[32px] bottom-[90px] z-20 animate-fade-in"
+          className="fixed right-[26px] bottom-[90px] z-20 animate-fade-in"
           onClick={scrollToBottom}
         />
       )}
