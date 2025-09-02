@@ -13,6 +13,7 @@ import {
   ChatEditMode,
   ChatVoiceMode,
 } from '@presentation/contracts/chat/ChatContract.tsx';
+import { GetChatMessagesContractProvider } from '@presentation/contracts/chat/GetChatMessagesContract.tsx';
 import useIsAtBottom from '@presentation/shared/hooks/useIsAtBottom.ts';
 import { type FC, memo, type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
@@ -38,7 +39,7 @@ const ChatWidget: FC<ChatWidgetProps> = ({
   // --- Инициализация всех хуков ---
   const { isAtBottom } = useIsAtBottom({ ref: chatRef, threshold: 300 });
 
-  const { messages, isFetchingNextPage, hasNextPage, fetchNextPage, isLoading } = useChatMessages(
+  const { messages, isFetchingNextPage, hasNextPage, fetchNextPage } = useChatMessages(
     chatId,
     chatRef,
   );
@@ -132,14 +133,8 @@ const ChatWidget: FC<ChatWidgetProps> = ({
 
     // 1. Базовый объект, общий для всех режимов
     const baseContract = {
-      queryLoading: isLoading,
       mutationLoading,
-      messages,
       chatRef,
-      isAtBottom,
-      isFetchingMore: isFetchingNextPage,
-      hasMore: hasNextPage,
-      fetchMoreMessages: fetchNextPage,
       handleDeleteMessage: deleteMessage,
       handleMultipleUpload,
       replyToMessage: replyMessage,
@@ -184,18 +179,12 @@ const ChatWidget: FC<ChatWidgetProps> = ({
       handleSubmit: sendMessage,
     } as ChatDefaultMode;
   }, [
-    isAtBottom,
     mode,
     sendingMessageLoading,
     editingMessageLoading,
     uploadLoading,
     isUploading,
     deleteLoading,
-    isLoading,
-    messages,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
     deleteMessage,
     handleMultipleUpload,
     replyMessage,
@@ -213,7 +202,49 @@ const ChatWidget: FC<ChatWidgetProps> = ({
     sendMessage,
   ]);
 
-  return <ChatContractProvider value={contractValue}>{children}</ChatContractProvider>;
+  const getChatMessagesContractValue = useMemo(
+    () => ({
+      loading: isFetchingNextPage, // Объединяем состояния загрузки
+      chatRef,
+      setReplyToMessage: setReplyMessage,
+      setEditMessage: handleSetEditMessage,
+      messages,
+      mutationLoading:
+        sendingMessageLoading ||
+        editingMessageLoading ||
+        uploadLoading ||
+        isUploading ||
+        deleteLoading,
+      handleDeleteMessage: deleteMessage,
+      isAtBottom,
+      isFetchingMore: isFetchingNextPage,
+      hasMore: hasNextPage,
+      fetchMoreMessages: fetchNextPage,
+      error: null,
+    }),
+    [
+      isFetchingNextPage,
+      chatRef,
+      setReplyMessage,
+      handleSetEditMessage,
+      messages,
+      sendingMessageLoading,
+      editingMessageLoading,
+      uploadLoading,
+      isUploading,
+      deleteLoading,
+      deleteMessage,
+      isAtBottom,
+      hasNextPage,
+      fetchNextPage,
+    ],
+  );
+
+  return (
+    <GetChatMessagesContractProvider value={getChatMessagesContractValue}>
+      <ChatContractProvider value={contractValue}>{children}</ChatContractProvider>
+    </GetChatMessagesContractProvider>
+  );
 };
 
 const MemoizedChatWidget = memo(ChatWidget);

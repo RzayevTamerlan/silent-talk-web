@@ -1,7 +1,7 @@
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Message } from '@domain/entities/Message.ts';
 import { MessageType } from '@domain/enums/MessageType.ts';
-import { useChatContract } from '@presentation/contracts/chat/ChatContract.tsx';
+import { useGetChatMessagesContract } from '@presentation/contracts/chat/GetChatMessagesContract.tsx';
 import { useMeContract } from '@presentation/contracts/user/MeContract.tsx';
 import MediaRenderer from '@presentation/dummies/chat/Messages/MediaRenderer.tsx';
 import VoiceMessagePlayer from '@presentation/dummies/chat/Messages/VoiceMessagePlayer.tsx';
@@ -34,7 +34,7 @@ const ReplyPreview: FC<ReplyPreviewProps> = ({ message }) => {
 const ChatMessage = memo(({ item }: { item: Message }) => {
   const { me } = useMeContract();
   const { setEditMessage, setReplyToMessage, handleDeleteMessage, mutationLoading } =
-    useChatContract();
+    useGetChatMessagesContract();
 
   const isAuthor = useCallback((messageUserId: string) => me?.id === messageUserId, [me?.id]);
 
@@ -151,9 +151,8 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
   );
 });
 
-// Основной компонент Messages
 const Messages = () => {
-  const { queryLoading, messages, chatRef } = useChatContract();
+  const { loading: queryLoading, messages, chatRef } = useGetChatMessagesContract();
   const { loading } = useMeContract();
 
   useLayoutEffect(() => {

@@ -7,7 +7,7 @@ import messageRepository from '@infra/repositories/messages';
 import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { Ref, useEffect, useLayoutEffect, useMemo } from 'react';
 
-const MESSAGES_PER_PAGE = 50;
+const MESSAGES_PER_PAGE = 25;
 const SCROLL_THRESHOLD = 300;
 
 export type InfiniteMessagesData = InfiniteData<PaginatedResult<Message>>;
