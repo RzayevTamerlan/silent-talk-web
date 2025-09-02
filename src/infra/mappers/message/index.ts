@@ -16,7 +16,7 @@ export class MessageMappers {
       medias: dto.medias?.map(MessageMappers.mediaToDomain) || [],
       replyTo: dto.replyTo ? MessageMappers.toDomain(dto.replyTo) : undefined,
       replies: [],
-      user: UserMappers.toDomain(dto.user),
+      user: dto.user ? UserMappers.toDomain(dto.user) : undefined!,
     };
   }
 
