@@ -7,7 +7,7 @@ import removeFalsyObjKeys from '@infra/shared/utils/removeFalsyObjKeys.ts';
 import { stringify } from '@infra/shared/utils/stringify.ts';
 import axios, { AxiosError, type InternalAxiosRequestConfig, type Method } from 'axios';
 
-console.log("Backend API URL:", import.meta.env.VITE_BACKEND_API);
+console.log('Backend API URL:', import.meta.env.VITE_BACKEND_API);
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API as string,

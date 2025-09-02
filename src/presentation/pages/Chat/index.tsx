@@ -14,8 +14,8 @@ const ChatPage = () => {
   const chatId = params.chatId || '';
 
   return (
-    <main className="h-screen">
-      <Layout className="h-full">
+    <main>
+      <Layout className="h-screen">
         <ChatHeader chatId={chatId} />
         <Layout>
           <Content className="flex flex-col">
