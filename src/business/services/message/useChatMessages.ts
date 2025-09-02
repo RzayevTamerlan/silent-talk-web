@@ -20,10 +20,12 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
     useInfiniteQuery<PaginatedResult<Message>, HttpError, InfiniteMessagesData, string[], number>({
       queryKey: queryKey,
       queryFn: async ({ pageParam }) => {
-        return messageRepository.getAllMessages(chatId, {
+        const res = await messageRepository.getAllMessages(chatId, {
           page: pageParam,
           limit: MESSAGES_PER_PAGE,
         });
+        console.log("Messages in queryFn:", res);
+        return res;
       },
       initialPageParam: 1,
       getNextPageParam: lastPage => {
@@ -132,6 +134,8 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
     initializeSocket();
   }, []);
 
+  console.log("Data pages in useChatMessages:", data?.pages);
+
   const messages = useMemo(() => {
     if (!data?.pages) return [];
     return data.pages
@@ -139,6 +143,8 @@ const useChatMessages = (chatId: string, chatRef?: Ref<HTMLDivElement>) => {
       .reverse()
       .flatMap(page => page.data);
   }, [data]);
+
+  console.log("useChatMessages messages", messages);
 
   return {
     messages,
