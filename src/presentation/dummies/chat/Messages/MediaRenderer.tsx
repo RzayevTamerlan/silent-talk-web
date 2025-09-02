@@ -3,6 +3,7 @@ import { FileTextOutlined } from '@ant-design/icons';
 import { Media } from '@domain/entities/Media.ts'; // Убедитесь, что тип Media импортирован
 import { MediaType } from '@domain/enums/MediaType.ts';
 import { FC, memo } from 'react';
+import { Image } from 'antd';
 
 type MediaRendererProps = {
   media: Media;
@@ -25,7 +26,7 @@ const MediaRenderer: FC<MediaRendererProps> = ({ media }) => {
   switch (media.type) {
     case MediaType.IMAGE:
       return (
-        <img
+        <Image
           src={mediaUrl}
           alt="image content"
           className="max-w-full max-h-80 rounded-lg object-cover"

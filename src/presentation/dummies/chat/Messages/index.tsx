@@ -27,7 +27,7 @@ const ReplyPreview: FC<ReplyPreviewProps> = ({ message }) => {
         {message?.user?.username || 'Not defined'}
       </Text>
       <p className="text-sm text-gray-400 truncate">
-        {message.text?.substring(0, 35) || 'Медиафайл'}
+        {message.text?.substring(0, 25) || 'Медиафайл'}
       </p>
     </button>
   );
