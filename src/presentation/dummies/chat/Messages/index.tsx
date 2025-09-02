@@ -6,7 +6,7 @@ import { useMeContract } from '@presentation/contracts/user/MeContract.tsx';
 import MediaRenderer from '@presentation/dummies/chat/Messages/MediaRenderer.tsx';
 import VoiceMessagePlayer from '@presentation/dummies/chat/Messages/VoiceMessagePlayer.tsx';
 import { Button, Dropdown, List, MenuProps, Typography } from 'antd';
-import { FC, memo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { FC, memo, useCallback, useLayoutEffect } from 'react';
 import { EventBusProvider, useEmit, useEvent } from 'vibus-react';
 
 const { Text } = Typography;
@@ -26,9 +26,7 @@ const ReplyPreview: FC<ReplyPreviewProps> = ({ message }) => {
       <Text className="font-bold text-sm text-gray-300">
         {message?.user?.username || 'Not defined'}
       </Text>
-      <p className="text-sm text-gray-400 truncate">
-        {message.text?.substring(0, 25) || 'Медиафайл'}
-      </p>
+      <p className="text-sm text-gray-400 truncate">{message.text?.substring(0, 25) || 'Медиафайл'}</p>
     </button>
   );
 };
@@ -78,7 +76,6 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
       }, 2000);
     }
   });
-
 
   return (
     <List.Item
@@ -155,19 +152,8 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
 });
 
 const Messages = () => {
-  const {
-    loading: queryLoading,
-    hasMore,
-    messages,
-    chatRef,
-    fetchMoreMessages,
-    isFetchingMore,
-  } = useGetChatMessagesContract();
+  const { loading: queryLoading, messages, chatRef } = useGetChatMessagesContract();
   const { loading } = useMeContract();
-
-  console.log("Messages", messages);
-
-  const prevScrollHeightRef = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     if (!queryLoading && chatRef?.current) {
@@ -175,42 +161,12 @@ const Messages = () => {
     }
   }, [queryLoading, messages, chatRef]);
 
-  useEffect(() => {
-    const container = chatRef.current;
-
-    const handleScroll = () => {
-      if (container && container.scrollTop === 0 && !isFetchingMore && hasMore) {
-        prevScrollHeightRef.current = container.scrollHeight;
-        fetchMoreMessages();
-      }
-    };
-
-    container?.addEventListener('scroll', handleScroll);
-
-    return () => {
-      container?.removeEventListener('scroll', handleScroll);
-    };
-  }, [chatRef, fetchMoreMessages, isFetchingMore, hasMore]); // Зависимости для эффекта
-
-  useLayoutEffect(() => {
-    if (prevScrollHeightRef.current && chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight - prevScrollHeightRef.current;
-      prevScrollHeightRef.current = null;
-    }
-  }, [chatRef, messages]);
-
   if (loading || queryLoading) {
     return <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>;
   }
 
   return (
     <div ref={chatRef} className="flex-grow p-4 overflow-y-auto">
-      {isFetchingMore && (
-        <div className="flex justify-center my-2">
-          <p className="text-gray-400">Загрузка предыдущих сообщений...</p>
-        </div>
-      )}
-
       <EventBusProvider>
         <List
           itemLayout="horizontal"
