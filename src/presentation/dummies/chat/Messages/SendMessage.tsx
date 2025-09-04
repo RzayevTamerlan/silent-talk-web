@@ -10,9 +10,11 @@ import { MediaType } from '@domain/enums/MediaType.ts';
 import { MessageType } from '@domain/enums/MessageType.ts';
 import { ChatContract, useChatContract } from '@presentation/contracts/chat/ChatContract.tsx';
 import { formatTime } from '@presentation/shared/utils/formatTime.ts';
-import { Alert, Button, Input } from 'antd';
+import { Alert, Button, Image, Input } from 'antd';
 import { ChangeEvent, memo, useRef } from 'react';
 import { Controller } from 'react-hook-form';
+
+const { TextArea } = Input;
 
 const getUploadTypeFromFile = (file: File): UploadType => {
   const type = file.type;
@@ -122,9 +124,11 @@ const SendMessage = () => {
               name="text"
               control={componentContract.chatForm.control}
               render={({ field }) => (
-                <Input
+                <TextArea
                   {...field}
                   size="large"
+                  autoSize={{ minRows: 1, maxRows: 6 }}
+                  style={{ resize: 'none' }}
                   placeholder="Редактировать сообщение..."
                   className="flex-grow mr-4"
                   disabled={componentContract.mutationLoading}
@@ -164,7 +168,7 @@ const SendMessage = () => {
                 {mediasValue.map((media, index) => (
                   <div key={index} className="relative">
                     {media.type === MediaType.IMAGE ? (
-                      <img
+                      <Image
                         src={`${import.meta.env.VITE_BACKEND_URL}${media.url}`}
                         alt={`attachment-${index}`}
                         className="h-16 w-16 object-cover rounded"
@@ -211,8 +215,10 @@ const SendMessage = () => {
                 name="text"
                 control={chatForm.control}
                 render={({ field }) => (
-                  <Input
+                  <TextArea
                     {...field}
+                    autoSize={{ minRows: 1, maxRows: 6 }}
+                    style={{ resize: 'none' }}
                     size="large"
                     placeholder="Напишите сообщение..."
                     className="flex-grow mr-4"

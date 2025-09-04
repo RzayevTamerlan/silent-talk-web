@@ -8,7 +8,7 @@ import { UpdateMessageDto } from '@infra/dtos/message/UpdateMessageDto.ts';
 import messageRepository from '@infra/repositories/messages';
 import { useMutation } from '@tanstack/react-query';
 import { dFunc } from 'd-func';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useCallback, useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
 
 type UseEditMessageReturn = {
@@ -64,13 +64,21 @@ const useEditMessage = ({
     setEditMessage(null);
   });
 
+  const handleSetEditMessage = useCallback(
+    (message: Message | null) => {
+      setEditMessage(message);
+      form.reset({ text: message?.text || '' });
+    },
+    [form],
+  );
+
   return {
     form,
     loading: isPending,
     updateMessage: handleSubmit,
     error: isError ? error?.message : [],
     editMessage,
-    setEditMessage,
+    setEditMessage: handleSetEditMessage,
   };
 };
 
