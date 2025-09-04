@@ -110,9 +110,13 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
 
           {item.replyTo && <ReplyPreview message={item.replyTo} />}
 
-          <Text className={`font-bold ${isCurrentUser ? 'text-white' : 'text-gray-300'}`}>
-            {isCurrentUser ? 'Вы' : item.user.username}
-          </Text>
+          {isCurrentUser && (
+            <div className="ml-3 flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                Я
+              </div>
+            </div>
+          )}
 
           {item.type === MessageType.VOICE && item.medias && item?.medias?.length > 0 ? (
             <div className="mt-2">
@@ -141,13 +145,9 @@ const ChatMessage = memo(({ item }: { item: Message }) => {
             })}
           </Text>
         </div>
-        {isCurrentUser && (
-          <div className="ml-3 flex-shrink-0">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-              Я
-            </div>
-          </div>
-        )}
+        <Text className={`font-bold ${isCurrentUser ? 'text-white' : 'text-gray-300'}`}>
+          {isCurrentUser ? 'Вы' : item.user.username}
+        </Text>
       </div>
     </List.Item>
   );
