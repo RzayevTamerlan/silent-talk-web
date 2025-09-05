@@ -5,8 +5,13 @@ import {
   useGetAllChatsContract,
 } from '@presentation/contracts/chat/GetAllChatsContract.tsx';
 import ChatItem from '@presentation/dummies/chat/ChatsList/ChatItem.tsx';
+import DeleteChatModal from '@presentation/dummies/chat/DeleteChatModal';
+import DeleteChatSearchParamsManager from '@presentation/widget-controls/chat/DeleteChatSearchParamsManager.tsx';
+import DeleteChatWidget from '@presentation/widgets/chat/DeleteChatWidget.tsx';
+import IsParticipantWidget from '@presentation/widgets/chat/IsParticipantWidget.tsx';
 import { Alert, Card, List, Pagination, Spin } from 'antd';
 import { ElementType, FC, memo } from 'react';
+import { VisibilityTarget, VisibilityTrigger } from 'react-visibility-manager';
 
 type ChatsListProps = {
   useContract?: () => GetAllChatsContract;
@@ -54,11 +59,23 @@ const ChatsList: FC<ChatsListProps> = ({ useContract = useGetAllChatsContract, A
         size="large"
         dataSource={data.data}
         renderItem={chat => (
-          <List.Item key={chat.id}>
-            <ChatItem ActionSlot={ActionSlot} chat={chat} />
-          </List.Item>
+          <IsParticipantWidget chatId={chat.id} key={chat.id}>
+            <List.Item>
+              <ChatItem ActionSlot={ActionSlot} chat={chat} />
+            </List.Item>
+          </IsParticipantWidget>
         )}
       />
+
+      <DeleteChatWidget>
+        <VisibilityTarget targetKey="deleteChat" isOpenPropName="isOpen">
+          <VisibilityTrigger triggerKey="deleteChat" propName="onCancel">
+            <DeleteChatSearchParamsManager>
+              <DeleteChatModal />
+            </DeleteChatSearchParamsManager>
+          </VisibilityTrigger>
+        </VisibilityTarget>
+      </DeleteChatWidget>
 
       {data.totalPages > 1 && (
         <div className="flex justify-center mt-6">

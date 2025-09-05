@@ -127,7 +127,7 @@ const SendMessage = () => {
                 <TextArea
                   {...field}
                   size="large"
-                  autoSize={{ minRows: 1, maxRows: 6 }}
+                  autoSize={{ minRows: 1, maxRows: 4 }}
                   style={{ resize: 'none' }}
                   placeholder="Редактировать сообщение..."
                   className="flex-grow mr-4"
@@ -217,7 +217,7 @@ const SendMessage = () => {
                 render={({ field }) => (
                   <TextArea
                     {...field}
-                    autoSize={{ minRows: 1, maxRows: 6 }}
+                    autoSize={{ minRows: 1, maxRows: 4 }}
                     style={{ resize: 'none' }}
                     size="large"
                     placeholder="Напишите сообщение..."

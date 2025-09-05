@@ -7,7 +7,6 @@ import GetAllChatsSearchParamsManager from '@presentation/widget-controls/chat/G
 import CreateChatWidget from '@presentation/widgets/chat/CreateChatWidget.tsx';
 import EnterChatWidget from '@presentation/widgets/chat/EnterChatWidget.tsx';
 import GetAllChatsWidget from '@presentation/widgets/chat/GetAllChatsWidget.tsx';
-import IsParticipantWidget from '@presentation/widgets/chat/IsParticipantWidget.tsx';
 import { Button, Modal } from 'antd';
 import { memo } from 'react';
 import { VisibilityProvider, VisibilityTarget, VisibilityTrigger } from 'react-visibility-manager';
@@ -46,9 +45,7 @@ const HomePage = () => {
 
                 <ChatsList
                   ActionSlot={({ chat }) => (
-                    <IsParticipantWidget chatId={chat.id}>
-                      <EnterChatModalAction chat={chat} className="mt-5 w-full" />
-                    </IsParticipantWidget>
+                    <EnterChatModalAction chat={chat} className="mt-5 w-full" />
                   )}
                 />
               </section>

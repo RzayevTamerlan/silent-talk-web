@@ -1,7 +1,10 @@
-import { TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { EllipsisOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Chat } from '@domain/entities/Chat.ts';
-import { Avatar, Card, Tag } from 'antd';
-import { ElementType, FC, memo } from 'react';
+import { useIsParticipantContract } from '@presentation/contracts/chat/IsParticipantContract.tsx';
+import { Avatar, Button, Card, Dropdown, type MenuProps, Tag } from 'antd';
+import { ElementType, FC, memo, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useVisibilityTarget } from 'react-visibility-manager';
 
 type ChatItemProps = {
   chat: Chat;
@@ -9,6 +12,28 @@ type ChatItemProps = {
 };
 
 const ChatItem: FC<ChatItemProps> = ({ chat, ActionSlot }) => {
+  const { toggle } = useVisibilityTarget('deleteChat');
+  const { loading, error, isParticipant } = useIsParticipantContract();
+  const [_searchParams, setSearchParams] = useSearchParams();
+
+  const items: MenuProps['items'] = useMemo(
+    () => [
+      {
+        key: 'delete',
+        label: 'Удалить чат',
+        onClick: () => {
+          setSearchParams(prev => {
+            const params = new URLSearchParams(prev);
+            params.set('deleteChat', chat.id);
+            return params;
+          });
+          toggle();
+        },
+      },
+    ],
+    [chat.id, setSearchParams, toggle],
+  );
+
   return (
     <Card className="bg-gray-800 border-gray-700">
       <div className="flex justify-between items-start">
@@ -37,6 +62,12 @@ const ChatItem: FC<ChatItemProps> = ({ chat, ActionSlot }) => {
           </div>
           {ActionSlot && <ActionSlot chat={chat} />}
         </div>
+
+        {isParticipant === true && !loading && error?.length === 0 && (
+          <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']}>
+            <Button type="text" icon={<EllipsisOutlined className="text-white text-2xl" />} />
+          </Dropdown>
+        )}
       </div>
     </Card>
   );
