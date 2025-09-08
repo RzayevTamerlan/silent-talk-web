@@ -8,7 +8,7 @@ import { SendMessageDto } from '@infra/dtos/message/SendMessageDto.ts';
 import messageRepository from '@infra/repositories/messages';
 import { useMutation } from '@tanstack/react-query';
 import { dFunc } from 'd-func';
-import { BaseSyntheticEvent, Ref, useState } from 'react';
+import { BaseSyntheticEvent, Ref, useCallback, useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
 
 type UseSendMessageReturn = {
@@ -59,7 +59,6 @@ const useSendMessage = ({
     if (chatRef && typeof chatRef !== 'function' && chatRef.current) {
       chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
     }
-    console.log('Triggered', data);
     await mutateAsync({
       ...data,
       replyToId: replyMessage?.id,
@@ -69,6 +68,21 @@ const useSendMessage = ({
     setReplyMessage(null);
   });
 
+  const handleMutateAsync = useCallback(
+    async (dto: SendMessageDto) => {
+      if (chatRef && typeof chatRef !== 'function' && chatRef.current) {
+        chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
+      }
+      await mutateAsync({
+        ...dto,
+        replyToId: replyMessage?.id,
+      });
+
+      if (replyMessage) setReplyMessage(null);
+    },
+    [chatRef, mutateAsync, replyMessage],
+  );
+
   return {
     form,
     loading: isPending,
@@ -76,7 +90,7 @@ const useSendMessage = ({
     error: isError ? error?.message : [],
     replyMessage,
     setReplyMessage,
-    sendMessageMutation: mutateAsync,
+    sendMessageMutation: handleMutateAsync,
   };
 };
 
