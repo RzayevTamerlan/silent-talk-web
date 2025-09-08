@@ -171,7 +171,9 @@ const SendMessage = () => {
                       <Image
                         src={`${import.meta.env.VITE_BACKEND_URL}${media.url}`}
                         alt={`attachment-${index}`}
-                        className="h-16 w-16 object-cover rounded"
+                        className="object-cover rounded"
+                        width={64}
+                        height={64}
                       />
                     ) : (
                       <div className="h-16 w-16 flex items-center justify-center bg-gray-700 rounded">

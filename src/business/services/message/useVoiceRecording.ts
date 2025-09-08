@@ -1,5 +1,6 @@
 import useUpload from '@business/services/upload/useUpload.ts';
 import { showToasts } from '@business/shared/utils/showToasts.ts';
+import { Message } from '@domain/entities/Message.ts';
 import { MediaType } from '@domain/enums/MediaType.ts';
 import { MessageType } from '@domain/enums/MessageType.ts';
 import { SendMessageDto } from '@infra/dtos/message/SendMessageDto.ts';
@@ -7,19 +8,21 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseVoiceRecordingProps {
   createNewMessage: (data: SendMessageDto) => void;
+  replyMessage?: Message | null;
 }
 
 interface UseVoiceRecordingReturn {
   isRecording: boolean;
   isUploading: boolean;
   startRecording: () => void;
-  stopRecording: () => void; // Эта функция теперь только отправляет
-  cancelRecording: () => void; // Новая функция для отмены
+  stopRecording: () => void;
+  cancelRecording: () => void;
   recordingTimer: number;
 }
 
 const useVoiceRecording = ({
   createNewMessage,
+  replyMessage,
 }: UseVoiceRecordingProps): UseVoiceRecordingReturn => {
   const { handleUpload, isLoading: isUploading } = useUpload();
 
@@ -61,6 +64,7 @@ const useVoiceRecording = ({
         createNewMessage({
           type: MessageType.VOICE,
           medias: [{ type: MediaType.VOICE, url: uploadedUrl }],
+          replyToId: replyMessage?.id,
         });
       } else {
         showToasts('Failed to upload voice message. Please try again.', 'error');
@@ -68,7 +72,7 @@ const useVoiceRecording = ({
     } catch (error) {
       console.error('Error during voice message upload:', error);
     }
-  }, [handleUpload, createNewMessage]);
+  }, [handleUpload, createNewMessage, replyMessage?.id]);
 
   const startRecording = useCallback(async () => {
     try {

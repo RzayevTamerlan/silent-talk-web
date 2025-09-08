@@ -226,7 +226,7 @@ const Messages = () => {
   }
 
   return (
-    <div ref={chatRef} className="flex-grow p-4 overflow-y-auto relative">
+    <div ref={chatRef} className="flex-grow p-3 overflow-y-auto relative">
       {isFetchingMore && (
         <div className="flex justify-center my-2">
           <p className="text-gray-400">Загрузка предыдущих сообщений...</p>

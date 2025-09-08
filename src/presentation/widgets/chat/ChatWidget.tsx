@@ -36,7 +36,6 @@ const ChatWidget: FC<ChatWidgetProps> = ({
   const [mode, setMode] = useState<ChatMode>('default');
   const chatRef = useRef<HTMLDivElement>(null);
 
-  // --- Инициализация всех хуков ---
   const { isAtBottom } = useIsAtBottom({ ref: chatRef, threshold: 300 });
 
   const { messages, isFetchingNextPage, hasNextPage, fetchNextPage } = useChatMessages(
@@ -65,7 +64,7 @@ const ChatWidget: FC<ChatWidgetProps> = ({
     loading: editingMessageLoading,
     form: editForm,
     updateMessage,
-    setEditMessage: setEditMessageFromHook, // Переименовываем, чтобы избежать конфликта
+    setEditMessage: setEditMessageFromHook,
     editMessage,
   } = useEditMessage({
     chatId,
@@ -92,7 +91,10 @@ const ChatWidget: FC<ChatWidgetProps> = ({
     recordingTimer,
     isUploading,
     cancelRecording: cancelRecordingFromHook,
-  } = useVoiceRecording({ createNewMessage: sendMessageMutation });
+  } = useVoiceRecording({
+    createNewMessage: sendMessageMutation,
+    replyMessage,
+  });
 
   // --- Обертки для управления режимами ---
   const handleSetEditMessage = useCallback(
@@ -131,7 +133,6 @@ const ChatWidget: FC<ChatWidgetProps> = ({
       isUploading ||
       deleteLoading;
 
-    // 1. Базовый объект, общий для всех режимов
     const baseContract = {
       mutationLoading,
       chatRef,
@@ -144,7 +145,6 @@ const ChatWidget: FC<ChatWidgetProps> = ({
       startRecording: handleStartRecording,
     };
 
-    // 2. Добавляем специфичные для режима свойства
     if (mode === 'edit' && editMessage) {
       return {
         ...baseContract,
@@ -169,7 +169,6 @@ const ChatWidget: FC<ChatWidgetProps> = ({
       } as ChatVoiceMode;
     }
 
-    // 3. Режим по умолчанию
     return {
       ...baseContract,
       mode: 'default',
@@ -204,7 +203,7 @@ const ChatWidget: FC<ChatWidgetProps> = ({
 
   const getChatMessagesContractValue = useMemo(
     () => ({
-      loading: isFetchingNextPage, // Объединяем состояния загрузки
+      loading: isFetchingNextPage,
       chatRef,
       setReplyToMessage: setReplyMessage,
       setEditMessage: handleSetEditMessage,
