@@ -79,7 +79,6 @@ const VoiceMessagePlayer: FC<VoiceMessagePlayerProps> = ({ url }) => {
       setAudioData();
     }
 
-    // Синхронизируем скорость воспроизведения
     audio.playbackRate = playbackRate;
 
     return () => {

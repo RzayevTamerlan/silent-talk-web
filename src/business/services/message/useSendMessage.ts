@@ -65,6 +65,7 @@ const useSendMessage = ({
       replyToId: replyMessage?.id,
     });
     if (clearForm) form.reset();
+    if (replyMessage) setReplyMessage(null);
     setReplyMessage(null);
   });
 
